@@ -11,3 +11,7 @@ def hello_world():
 @app.route('/test')
 def test():
     return 'Hello test Marko here!'
+
+@app.route('/test2')
+def test2():
+    return 'Hello test Teodor here!'
