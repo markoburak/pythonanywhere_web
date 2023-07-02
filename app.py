@@ -19,4 +19,4 @@ def test2():
 
 @app.route("/main")
 def index():
-    return render_template("main_page.html")
+    return render_template("main.html")
