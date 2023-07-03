@@ -1,7 +1,5 @@
 # A very simple Flask Hello World app for you to get started with...
 
-from models import Comment
-
 from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 
@@ -31,6 +29,12 @@ def test():
 def test2():
     return 'Hello test Teodor here!'
 
+class Comment(db.Model):
+
+    __tablename__ = "comments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(4096))
 comments = []
 
 @app.route("/main", methods=["GET", "POST"])
