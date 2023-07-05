@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+from .models import Comment
+from . import db
 
 views = Blueprint('views', __name__)
 
@@ -14,11 +16,15 @@ def test():
 def test2():
     return 'Hello test Teodor here!'
 
-comments = []
 @views.route("/main", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
+        comments = Comment.query.all()
+        print('here')
+        print(comments)
         return render_template("main.html", comments=comments)
     elif request.method == "POST":
-        comments.append(request.form["contents"])
+        new_comment = Comment(content=request.form["contents"])
+        db.session.add(new_comment)
+        db.session.commit()
     return redirect(url_for('views.index'))
