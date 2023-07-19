@@ -28,7 +28,12 @@ def create_app():
     if local:
         SQLALCHEMY_DATABASE_URI = f"mysql://{db_user}:{db_password}@{db_host}/{db_name}"
     else:
-        SQLALCHEMY_DATABASE_URI = f"mysql+mysqlconnector://{db_user}:{db_password}@{db_host}/{db_name}"
+        SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
+            username=db_user,
+            password=db_password,
+            hostname=db_host,
+            databasename=db_name,
+        )
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
