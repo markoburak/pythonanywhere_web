@@ -20,8 +20,6 @@ def test2():
 def index():
     if request.method == "GET":
         comments = Comment.query.all()
-        print('here')
-        print(comments)
         return render_template("main.html", comments=comments)
     elif request.method == "POST":
         new_comment = Comment(content=request.form["contents"])
