@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Main{% endblock %}
+{% block title %}User info{% endblock %}
 
 {% block content %}
     <nav class="navbar navbar-inverse">
@@ -11,30 +11,22 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">My scratchpad</a>
+          <a class="navbar-brand" href="../">Home</a>
           <a class="navbar-brand" href="/user_info_all">User info</a>
         </div>
       </div>
     </nav>
-
+    <hr>
     <div class="container">
-
-       {% for comment in comments %}
-            <div class="row">
-                {{ comment.content }}
-            </div>
+        {% for user_info in user_info_all %}
+        <div class="row">
+            <h4>
+                <a href="/user_info/{{ user_info.id }}"><strong>Name:</strong> {{ user_info.name }}</a>
+            </h4>
+        </div>
         {% endfor %}
 
-        <div class="row">
-            <form action="/main" method="POST">
-                <textarea class="form-control" name="contents" placeholder="Enter a comment"></textarea>
-                <input type="submit" class="btn btn-success" value="Post comment">
-            </form>
-        </div>
+     <hr>
 
-        <div class="row">
-            <img src="{{ url_for('static', filename='img/test_img.jpg') }}">
-        </div>
-
-    </div>
+     </div>
 {% endblock %}
