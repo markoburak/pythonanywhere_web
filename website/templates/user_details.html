@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}User details{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <br>
+        <form action="/user_details" method="POST" id="user_details_form">
+          <div class="row">
+            <div class="col">
+              <label for="first_name">First Name</label>
+              <input name="first_name" id="first_name" type="text" class="form-control" placeholder="First name" value="{{user.first_name}}">
+            </div>
+            <div class="col">
+              <label for="last_name">Last Name</label>
+              <input name="last_name" id="last_name" type="text" class="form-control" placeholder="Last name" value="{{user.last_name}}">
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+              <label for="email">Email</label>
+              <input name="email" id="email" type="email" class="form-control" placeholder="Email" value="{{user.email}}">
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-2">
+              <label for="code">Unique code</label>
+              <input name="code" id="code" type="text" class="form-control" placeholder="Code" value="{{user.code}}" readonly>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+                <button class="btn btn-success" type="submit" form="user_details_form">Update info</button>
+            </div>
+          </div>
+        </form>
+
+    </div>
+
+    <br>
+    {% if linked_users|length == 0 %}
+      <div class="row justify-content-center">
+            <div class="col-4 center_text">
+                <h3>There are no linked users to this account.</h3>
+            </div>
+      </div>
+    {% else %}
+    <div class="row justify-content-center">
+      <div class="col-4 center_text">
+              <h3>Linked Users</h3>
+            </div>
+      </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+      <div class="col-4 center_text">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Code</th>
+                  <th scope="col"></th>
+                </tr>
+                {% for linked_user in linked_users %}
+                    <tr>
+                      <th scope="col">{{ loop.index }}</th>
+                      <th scope="col">{{ linked_user.first_name }}</th>
+                      <th scope="col">{{ linked_user.code }}</th>
+                      <th scope="col">
+                          <form class="form-horizontal" action="/delete_link/{{ linked_user[0].id }}" method="POST">
+                                <button type="submit" class="btn btn-default btn-danger"><i class="fa fa-trash"></i></button>
+                          </form>
+                      </th>
+                    </tr>
+
+                {% endfor %}
+            </thead>
+        </table>
+
+      </div>
+    </div>
+    {% endif %}
+    <div class="row justify-content-center">
+            <div class="col-1 center_text">
+                <form action="/link_user" method="POST" id="link_user_form">
+                    <input name="link_code" id="link_code" type="text" class="form-control" placeholder="Code">
+                </form>
+            </div>
+            <div class="col-1 center_text">
+                <button class="btn btn-primary" type="submit" form="link_user_form">Link user</button>
+            </div>
+    </div>
+{% endblock %}

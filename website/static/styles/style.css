@@ -1,0 +1,11 @@
+.white_text {
+    color: white;
+}
+
+.center_text {
+    text-align: center;
+}
+
+.row {
+  padding-top: 20px;
+}

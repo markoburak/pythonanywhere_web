@@ -2,39 +2,76 @@
 {% block title %}Main{% endblock %}
 
 {% block content %}
-    <nav class="navbar navbar-inverse">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">My scratchpad</a>
-          <a class="navbar-brand" href="/user_info_all">User info</a>
+    <div class="container mt-5">
+            <form action="/add_item" method="POST" id="add_item"></form>
+
+            <table class="table table-striped table-dark table-responsive-md">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">User</th>
+                  <th scope="col">Date</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for shopping_list_item in shopping_list %}
+                    <tr>
+                      <td scope="row">{{loop.index}}</td>
+                      <td>{{ shopping_list_item.item }}</td>
+                      <td>{{ shopping_list_item.category }}</td>
+                      <td>{% set user_id = shopping_list_item.user_id %}
+                          {% for user_data in users %}
+                            {% if user_data.id == user_id %}
+                                {{user_data.first_name}}
+                            {% endif %}
+                          {% endfor %}
+                      </td>
+                      <td>{{ shopping_list_item.created_date }}</td>
+                      <td>
+                          <form class="form-horizontal" action="/delete_shopping_list_item" method="POST">
+                              <button type="submit" class="btn btn-default btn-danger"><i class="fa fa-trash"></i></button>
+                          </form>
+                      </td>
+                    </tr>
+                {% endfor %}
+
+                <tr>
+                  <th scope="row"></th>
+                  <td><input type="text" name="item" form="add_item"></td>
+                  {% if categories|length > 0 %}
+                  <td>
+                      <input type="text" list="categories" name="category" form="add_item" autocomplete="off" />
+                        <datalist id="categories">
+                          {% for category in categories %}
+                              <option value="{{category[0]}}">{{category[0]}}</option>
+                          {% endfor %}
+                        </datalist>
+                  </td>
+                  {% else %}
+                    <td><input type="text" name="category" form="add_item" value="Default"></td>
+                  {% endif %}
+                  <td>{{user.first_name}}</td>
+                  <td id="current_date">
+                      <script>
+                        const date = new Date();
+                        let currentDay = String(date.getDate()).padStart(2, '0');
+                        let currentMonth = String(date.getMonth()+1).padStart(2,"0");
+                        let currentYear = date.getFullYear();
+                        let currentDate = `${currentYear}-${currentMonth}-${currentDay}`;
+
+                        document.getElementById("current_date").innerHTML = currentDate;
+                      </script>
+                  </td>
+                  <td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <button class="btn btn-success" type="submit" form="add_item">Add Item</button>
         </div>
-      </div>
-    </nav>
-
-    <div class="container">
-
-       {% for comment in comments %}
-            <div class="row">
-                {{ comment.content }}
-            </div>
-        {% endfor %}
-
-        <div class="row">
-            <form action="/main" method="POST">
-                <textarea class="form-control" name="contents" placeholder="Enter a comment"></textarea>
-                <input type="submit" class="btn btn-success" value="Post comment">
-            </form>
-        </div>
-
-        <div class="row">
-            <img src="{{ url_for('static', filename='img/test_img.jpg') }}">
-        </div>
-
     </div>
 {% endblock %}

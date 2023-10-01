@@ -1,7 +1,8 @@
 from website import create_app
-from website import request, render_template, redirect, url_for
+import secrets
 
 app = create_app()
+app.secret_key = secrets.token_hex(16)
 
 if __name__ == '__main__':
     app.run(debug=True)
