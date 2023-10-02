@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from website.models import User, User_lnk, User_testing, ShoppingList
 from website import db
-from sqlalchemy import text
+from sqlalchemy import text, or_
 from flask_login import login_required, current_user
 import re
 
@@ -11,8 +11,14 @@ views = Blueprint('views', __name__)
 @login_required
 def index():
     if request.method == "GET":
-        user_shopping_list = ShoppingList.query.filter(ShoppingList.user_id == current_user.id).all()
-        categories = db.session.query(ShoppingList.category).distinct().filter(ShoppingList.user_id == current_user.id).all()
+
+        linked_users = [x.user_lnk_id for x in User_lnk.query.filter(User_lnk.user_main_id == current_user.id).all()]
+
+        user_shopping_list = ShoppingList.query.filter(ShoppingList.active == True).filter(
+            or_(ShoppingList.user_id == current_user.id, ShoppingList.user_id.in_(linked_users))).all()
+
+        categories = db.session.query(ShoppingList.category).distinct().filter(ShoppingList.active == True).filter(
+            or_(ShoppingList.user_id == current_user.id, ShoppingList.user_id.in_(linked_users))).all()
         users = User.query.all()
         return render_template("main.html", shopping_list=user_shopping_list, users=users, user=current_user, categories=categories)
     return redirect(url_for('views.index'))
@@ -24,7 +30,7 @@ def add_item():
         item = request.form.get('item')
         categoty = request.form.get('category')
 
-        existing_item = ShoppingList.query.filter(ShoppingList.item == item, ShoppingList.user_id == current_user.id).first()
+        existing_item = ShoppingList.query.filter(ShoppingList.item == item, ShoppingList.active == True, ShoppingList.user_id == current_user.id).first()
         if existing_item:
             flash('Item already exists.', category='error')
         elif len(item) < 3:
@@ -38,6 +44,44 @@ def add_item():
             flash('Item added!', category='success')
 
     return redirect(url_for('views.index'))
+
+@views.route("/update_item_checkbox/<item_id>", methods=["POST"])
+@login_required
+def update_item_checkbox(item_id):
+    if request.method == "POST":
+        checkbox_checked = False
+        if request.form.get("checkbox_to_update"):
+            checkbox_checked = True
+
+        existing_item = ShoppingList.query.filter(ShoppingList.id == item_id, ShoppingList.active == True).first()
+        if existing_item:
+            existing_item.checked = checkbox_checked
+            try:
+                db.session.commit()
+                # flash('Updated item!', category='success')
+            except:
+                flash('Couldn\'t update the item', category='error')
+        else:
+            flash('Cannot find the item!', category='error')
+        return redirect(url_for('views.index'))
+
+@views.route("/delete_checked", methods=["POST"])
+@login_required
+def delete_checked():
+    if request.method == "POST":
+        linked_users = [x.user_lnk_id for x in User_lnk.query.filter(User_lnk.user_main_id == current_user.id).all()]
+
+        items = ShoppingList.query.filter(ShoppingList.checked == True, ShoppingList.active == True).filter(
+            or_(ShoppingList.user_id == current_user.id, ShoppingList.user_id.in_(linked_users))).all()
+        if items:
+            for item in items:
+                item.active = False
+            try:
+                db.session.commit()
+                flash('Deleted checked items!', category='success')
+            except:
+                flash('Couldn\'t delete the items', category='error')
+        return redirect(url_for('views.index'))
 
 @views.route("/user_info_all", methods=["GET"])
 def user_info_all():

@@ -19,6 +19,8 @@ class ShoppingList(db.Model):
     item = db.Column(db.String(50))
     created_date = db.Column(db.Date(), default=func.now())
     category = db.Column(db.String(50), default='Default')
+    checked = db.Column(db.Boolean, default=False, nullable=False)
+    active = db.Column(db.Boolean, default=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class User(db.Model, UserMixin):

@@ -31,8 +31,8 @@
                       </td>
                       <td>{{ shopping_list_item.created_date }}</td>
                       <td>
-                          <form class="form-horizontal" action="/delete_shopping_list_item" method="POST">
-                              <button type="submit" class="btn btn-default btn-danger"><i class="fa fa-trash"></i></button>
+                          <form action="/update_item_checkbox/{{shopping_list_item.id}}" method="POST" id="item_checkbox_update{{shopping_list_item.id}}">
+                            <input onchange="document.getElementById('item_checkbox_update{{shopping_list_item.id}}').submit()" class="form-check-input" type="checkbox" name="checkbox_to_update" value="checked" id="checkbox" {{ "checked" if shopping_list_item.checked == True }}>
                           </form>
                       </td>
                     </tr>
@@ -73,5 +73,17 @@
 
             <button class="btn btn-success" type="submit" form="add_item">Add Item</button>
         </div>
-    </div>
+        </div>
+        <div class="container mt-2">
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-primary" type="submit" form="add_item">Add Item</button>
+                </div>
+                <div class="col d-flex align-items-end justify-content-end">
+                    <form action="/delete_checked" method="POST" id="delete_items">
+                        <button class="btn btn-danger" type="submit" form="delete_items">Delete checked</button>
+                    </form>
+                </div>
+              </div>
+        </div>
 {% endblock %}
