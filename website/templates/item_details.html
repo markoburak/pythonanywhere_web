@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}User details{% endblock %}
+
+{% block content %}
+    <div class="container mt-5 md-md-0">
+        <div class="row mb-4">
+            <h1 class="text-{{dark_mode_text}} text-center">Item details</h1>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <form action="/item_details/{{item_info.id}}" method="POST" id="update_form">
+
+                      <label for="item_name" class="text-{{dark_mode_text}}">Item Name</label>
+                      <input name="item_name" id="item_name" type="text" class="form-control mb-3" placeholder="Item name" value="{{item_info.item}}">
+                      <label for="item_category" class="text-{{dark_mode_text}}">Category</label>
+                      <input list="categories" name="item_category" id="item_category" type="text" class="form-control mb-3" placeholder="Item category" value="{{item_info.category}}">
+                        <datalist id="categories">
+                                  {% for category in categories %}
+                                      <option value="{{category[0]}}">{{category[0]}}</option>
+                                  {% endfor %}
+                        </datalist>
+                      <label for="item_first_name" class="text-{{dark_mode_text}}">First Name</label>
+                      <input name="item_first_name" id="item_first_name" type="text" class="form-control mb-3" placeholder="First name" value="{{item_user.first_name}}" readonly>
+                      <label for="item_last_name" class="text-{{dark_mode_text}}">Last Name</label>
+                      <input name="item_last_name" id="item_last_name" type="text" class="form-control mb-3" placeholder="Last name" value="{{item_user.last_name}}" readonly>
+                      <label for="item_date" class="text-{{dark_mode_text}}">Item Date</label>
+                      <input name="item_date" id="item_date" type="text" class="form-control mb-3" placeholder="Item Date" value="{{item_info.created_date}}" readonly>
+                      <label for="item_checked" class="custom-control-label text-{{dark_mode_text}}">Checked</label>
+                      <div class="form-check form-switch mb-3">
+                          <input name="item_checked" id="item_checked" type="checkbox" class="form-check-input" value='{{ "checked" if item_info.checked == True }}' {{ "checked" if item_info.checked == True }}>
+                      </div>
+                </form>
+            </div>
+                <div class="col-6 d-flex justify-content-center align-items-center">
+                    <img class="list_img {{img_color}}" src="{{ url_for('static', filename='img/list.png') }}">
+                </div>
+            </div>
+        <div class="row align-items-end mt-3">
+            <div class="col-6">
+                <button type="submit" class="btn btn-warning" form="update_form">Update</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

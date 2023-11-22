@@ -45,9 +45,15 @@ def create_app():
 
     from website.blueprints.views import views
     from website.blueprints.auth import auth
+    from website.blueprints.admin import admin
+    from website.blueprints.user_details_bp import user_details_bp
+    from website.blueprints.item_details_bp import item_details_bp
 
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
+    app.register_blueprint(admin, url_prefix="/admin/")
+    app.register_blueprint(user_details_bp, url_prefix="/")
+    app.register_blueprint(item_details_bp, url_prefix="/")
 
     if local:
         create_database(app)
@@ -55,6 +61,7 @@ def create_app():
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
+    login_manager.login_message = ''
 
     @login_manager.user_loader
     def load_user(id):

@@ -2,32 +2,37 @@
 {% block title %}User details{% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container mb-5 md-md-0">
         <br>
         <form action="/user_details" method="POST" id="user_details_form">
           <div class="row">
             <div class="col">
-              <label for="first_name">First Name</label>
+              <label for="first_name" class="text-{{dark_mode_text}}">First Name</label>
               <input name="first_name" id="first_name" type="text" class="form-control" placeholder="First name" value="{{user.first_name}}">
             </div>
             <div class="col">
-              <label for="last_name">Last Name</label>
+              <label for="last_name" class="text-{{dark_mode_text}}">Last Name</label>
               <input name="last_name" id="last_name" type="text" class="form-control" placeholder="Last name" value="{{user.last_name}}">
             </div>
           </div>
           <br>
           <div class="row">
             <div class="col">
-              <label for="email">Email</label>
+              <label for="email" class="text-{{dark_mode_text}}">Email</label>
               <input name="email" id="email" type="email" class="form-control" placeholder="Email" value="{{user.email}}">
             </div>
           </div>
           <br>
-          <div class="row">
-            <div class="col-2">
-              <label for="code">Unique code</label>
+          <div class="row align-items-center justify-content-between">
+            <div class="col-5  col-md-2">
+              <label for="code" class="text-{{dark_mode_text}}">Unique code</label>
               <input name="code" id="code" type="text" class="form-control" placeholder="Code" value="{{user.code}}" readonly>
             </div>
+            {% if admin_user %}
+                <div class="col-5 col-md-2 card text-{{dark_mode_reverse_text}} bg-{{dark_mode_reverse}} d-flex align-items-center justify-content-end flex-column mr-3 mer-md-0">
+                    <p class="m-1 card-text">Admin User</p>
+                </div>
+            {% endif %}
           </div>
           <br>
           <div class="row">
@@ -36,61 +41,75 @@
             </div>
           </div>
         </form>
-
+        <br>
+        <div class="row">
+              <div class="col">
+                  <p class="text-{{dark_mode_text}}">Dark Mode</p>
+                  <form action="/update_dark_mode" method="POST" id="dark_mode">
+                      <div class="form-check form-switch">
+                          <input onchange="document.getElementById('dark_mode').submit()" type="checkbox" class="form-check-input" id="customSwitch1" name="dark_mode_toggle" {{ "checked" if current_user.dark_mode == True }}>
+                          <label class="custom-control-label" for="customSwitch1"></label>
+                      </div>
+                  </form>
+              </div>
+          </div>
     </div>
 
+
     <br>
-    {% if linked_users|length == 0 %}
-      <div class="row justify-content-center">
-            <div class="col-4 center_text">
-                <h3>There are no linked users to this account.</h3>
+    <div class="container">
+        {% if linked_users|length == 0 %}
+          <div class="row justify-content-center">
+                <div class="col-10 col-md-8 center_text mb-2">
+                    <h4 class="text-{{dark_mode_text}}">There are no linked users to this account.</h4>
+                </div>
+          </div>
+        {% else %}
+        <div class="row justify-content-center">
+            <div class="col-10 col-md-8 center_text">
+                <h3 class="text-{{dark_mode_text}}">Linked Users</h3>
             </div>
-      </div>
-    {% else %}
-    <div class="row justify-content-center">
-      <div class="col-4 center_text">
-              <h3>Linked Users</h3>
-            </div>
-      </div>
-    </div>
-    <br>
-    <div class="row justify-content-center">
-      <div class="col-4 center_text">
-        <table class="table">
-            <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Code</th>
-                  <th scope="col"></th>
-                </tr>
-                {% for linked_user in linked_users %}
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-10 col-md-8 center_text">
+            <table class="table">
+                <thead>
                     <tr>
-                      <th scope="col">{{ loop.index }}</th>
-                      <th scope="col">{{ linked_user.first_name }}</th>
-                      <th scope="col">{{ linked_user.code }}</th>
-                      <th scope="col">
-                          <form class="form-horizontal" action="/delete_link/{{ linked_user[0].id }}" method="POST">
-                                <button type="submit" class="btn btn-default btn-danger"><i class="fa fa-trash"></i></button>
-                          </form>
-                      </th>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Code</th>
+                      <th scope="col"></th>
                     </tr>
+                </thead>
+                    {% for linked_user in linked_users %}
+                        <tr>
+                          <th scope="col">{{ loop.index }}</th>
+                          <th scope="col">{{ linked_user.first_name }}</th>
+                          <th scope="col">{{ linked_user.code }}</th>
+                          <th scope="col">
+                              <form class="form-horizontal" action="/delete_link/{{ linked_user[0].id }}" method="POST">
+                                    <button type="submit" class="btn btn-default btn-danger"><i class="fa fa-trash"></i></button>
+                              </form>
+                          </th>
+                        </tr>
 
-                {% endfor %}
-            </thead>
-        </table>
+                    {% endfor %}
 
-      </div>
-    </div>
-    {% endif %}
-    <div class="row justify-content-center">
-            <div class="col-1 center_text">
-                <form action="/link_user" method="POST" id="link_user_form">
-                    <input name="link_code" id="link_code" type="text" class="form-control" placeholder="Code">
-                </form>
-            </div>
-            <div class="col-1 center_text">
-                <button class="btn btn-primary" type="submit" form="link_user_form">Link user</button>
-            </div>
+            </table>
+
+          </div>
+        </div>
+        {% endif %}
+        <div class="row justify-content-center">
+                <div class="col-4 col-md-2 center_text">
+                    <form action="/link_user" method="POST" id="link_user_form">
+                        <input name="link_code" id="link_code" type="text" class="form-control" placeholder="Code">
+                    </form>
+                </div>
+                <div class="col-4 col-md-2 center_text">
+                    <button class="btn btn-primary" type="submit" form="link_user_form">Link user</button>
+                </div>
+        </div>
+        <br>
     </div>
 {% endblock %}
