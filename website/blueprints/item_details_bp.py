@@ -50,4 +50,4 @@ def item_details(item_id):
                     flash('Something didn\'t work', category='error')
         else:
             flash('Cannot update the item!', category='error')
-        return redirect(url_for('item_details_bp.item_details', item_id = item_id))
+        return redirect(url_for('views.index'))

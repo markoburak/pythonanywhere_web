@@ -50,6 +50,10 @@ input[readonly] {
   width: auto;
 }
 
+.full_width{
+    width: 100%;
+}
+
 /*
 multiple selector options
 

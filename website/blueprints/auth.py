@@ -7,6 +7,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
 
+
 @auth.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -25,14 +26,17 @@ def login():
 
     return render_template("login.html", user=current_user)
 
+
 @auth.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
+
 def generate_unique_code():
     return str(random.randrange(1000, 10000)) + ''.join([random.choice(string.ascii_lowercase) for _ in range(4)])
+
 
 def create_unique_code(num_of_run):
     unique_code = generate_unique_code()
@@ -45,8 +49,10 @@ def create_unique_code(num_of_run):
     else:
         return unique_code
 
+
 @auth.route("/sign_up", methods=['GET', 'POST'])
 def sign_up():
+    def_email, def_first_name, def_last_name = "", "", ""
     if request.method == 'POST':
         email = request.form.get('email')
         first_name = request.form.get('firstName')
@@ -63,21 +69,26 @@ def sign_up():
             flash('First name must be greater than 1 characters.', category='error')
         elif len(last_name) < 2:
             flash('Last name must be greater than 1 characters.', category='error')
-        elif password1 != password2:
-            flash('Password don\'t match', category='error')
-        elif len(password1) < 8:
-            flash('Password must be at least 7 characters', category='error')
         else:
-
-            unique_code = create_unique_code(0)
-            if not unique_code:
-                flash('Code couldn\'t be generated. Contact us, please.', category='error')
+            def_email = email
+            def_first_name = first_name
+            def_last_name = last_name
+            if password1 != password2:
+                flash('Password don\'t match', category='error')
+            elif len(password1) < 8:
+                flash('Password must be at least 7 characters', category='error')
             else:
-                new_user = User(email=email, first_name=first_name, last_name=last_name, password=generate_password_hash(password1, method='sha256'), code=unique_code)
-                db.session.add(new_user)
-                db.session.commit()
-                login_user(new_user, remember=True)
-                flash('Account created!', category='success')
-                return redirect(url_for('views.index'))
 
-    return render_template("sign_up.html", user=current_user)
+                unique_code = create_unique_code(0)
+                if not unique_code:
+                    flash('Code couldn\'t be generated. Contact us, please.', category='error')
+                else:
+                    new_user = User(email=email, first_name=first_name, last_name=last_name,
+                                    password=generate_password_hash(password1, method='sha256'), code=unique_code)
+                    db.session.add(new_user)
+                    db.session.commit()
+                    login_user(new_user, remember=True)
+                    flash('Account created!', category='success')
+                    return redirect(url_for('views.index'))
+
+    return render_template("sign_up.html", user=current_user, def_email=def_email, def_first_name=def_first_name, def_last_name=def_last_name)

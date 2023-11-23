@@ -30,8 +30,8 @@ def index():
 @login_required
 def add_item():
     if request.method == "POST":
-        item = request.form.get('item')
-        categoty = request.form.get('category')
+        item = request.form.get('item_modal')
+        categoty = request.form.get('category_modal')
 
         existing_item = ShoppingList.query.filter(ShoppingList.item == item, ShoppingList.active == True, ShoppingList.user_id == current_user.id).first()
         if existing_item:
