@@ -11,16 +11,16 @@ item_details_bp = Blueprint('item_details_bp', __name__)
 def item_details(item_id):
     if request.method == "GET":
         item_info = ShoppingList.query.filter_by(id=item_id).first()
-        if item_info:
-            item_user = User.query.filter_by(id=item_info.user_id).first()
+        if current_user.id == item_info.user_id:
+            if item_info:
+                item_user = User.query.filter_by(id=item_info.user_id).first()
 
-            linked_users = [x.user_lnk_id for x in
-                            User_lnk.query.filter(User_lnk.user_main_id == current_user.id).all()]
-            categories = db.session.query(ShoppingList.category).distinct().filter(ShoppingList.active == True).filter(
-                or_(ShoppingList.user_id == current_user.id, ShoppingList.user_id.in_(linked_users))).all()
-            return render_template("item_details.html", user=current_user, item_info=item_info, item_user=item_user, categories=categories)
-        else:
-            return redirect(url_for('views.index'))
+                linked_users = [x.user_lnk_id for x in
+                                User_lnk.query.filter(User_lnk.user_main_id == current_user.id).all()]
+                categories = db.session.query(ShoppingList.category).distinct().filter(ShoppingList.active == True).filter(
+                    or_(ShoppingList.user_id == current_user.id, ShoppingList.user_id.in_(linked_users))).all()
+                return render_template("item_details.html", user=current_user, item_info=item_info, item_user=item_user, categories=categories)
+        return redirect(url_for('views.index'))
     elif request.method == "POST":
 
         item_info = ShoppingList.query.filter_by(id=item_id).first()
